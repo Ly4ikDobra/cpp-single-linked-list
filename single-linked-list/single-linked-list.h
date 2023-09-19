@@ -21,11 +21,11 @@ public:
     SingleLinkedList() = default;
 
     SingleLinkedList(std::initializer_list<Type> values) {
-        CopyElems(values);
+        CopyElems(values.begin(), values.end());
     }
 
     SingleLinkedList(const SingleLinkedList& other) {
-        CopyElems(other);
+        CopyElems(other.begin(), other.end());
     }
 
     SingleLinkedList& operator=(const SingleLinkedList& rhs) {
@@ -285,22 +285,21 @@ public:
 
 private:
     template<typename T>
-    void CopyElems(const T& elems) {
+    void CopyElems(T from, T to) {
         assert(size_ == 0 && head_.next_node == nullptr);
  
-        SingleLinkedList elem_copy;
-        SingleLinkedList tmp_reverse;
+        SingleLinkedList<Type> tmp;
+        Node** node_ptr = &tmp.head_.next_node;
 
-        // первый цикл вставляет элементы в обратном порядке
-        for (auto it = elems.begin(); it != elems.end(); ++it) {
-            tmp_reverse.PushFront(*it);
-        }
-        // второй цикл вставляет элементы в нужном для обмена порядке
-        for (auto it = tmp_reverse.begin(); it != tmp_reverse.end(); ++it) {
-            elem_copy.PushFront(*it);
-        }
+        while (from != to) {
+            assert(*node_ptr == nullptr);
 
-        swap(elem_copy);
+            *node_ptr = new Node(*from, nullptr);
+            ++tmp.size_;
+            node_ptr = &((*node_ptr)->next_node);
+            ++from;
+        }
+        swap(tmp);
 
     }
 
